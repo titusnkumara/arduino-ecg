@@ -34,3 +34,5 @@
 # DevCPP
 *.dev
 *.layout
+*.win
+*.bat
