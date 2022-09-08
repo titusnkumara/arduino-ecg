@@ -43,8 +43,11 @@ ECGProcessor::ECGProcessor(uint32_t _Fs) {
 void ECGProcessor::_addData(int32_t val) {
 #ifdef FILTERING
 	//averaging filter, could be inefficient
-	readSampleArray[curIdx] = (val * NEW_COEFF + prevVal * OLD_COEFF)/FCO_MAX;
+	//printf("%d, %d \n",val,prevVal);
+	readSampleArray[curIdx] = ((val * NEW_COEFF) + (prevVal * OLD_COEFF))/FCO_MAX;
+	DV(printf("%d,%d\n",val,readSampleArray[curIdx]);)
 	prevVal = readSampleArray[curIdx];
+	
 #else
 	readSampleArray[curIdx] = val;
 #endif
@@ -54,6 +57,16 @@ void ECGProcessor::_addData(int32_t val) {
 	lastDataIdx_1 = (lastDataIdx_1 + 1) % readSampleArraySize;
 	nBehind = (nBehind + 1) % readSampleArraySize;
 	nBehind_1 = (nBehind_1 + 1) % readSampleArraySize;
+	#ifdef GET_LOCALMAXMIN
+	if(val>vLocalMax){
+		vLocalMax = val;
+		vLocalMaxIdx = counter;
+	}
+	if(val<vLocalMin){
+		vLocalMin = val;
+		vLocalMinIdx = counter;
+	}
+	#endif
 	//printf("%d \n",curIdx);
 }
 
@@ -71,7 +84,7 @@ void ECGProcessor::_appendEvent(int32_t absDiff, uint64_t counter, int32_t event
 	int32_t idxDiff = eventArray[eventIdx].idxSample - eventArray[prevEvIdx].idxSample;
 	evFreq = (evFreq*9+idxDiff)/10;
 	eventArray[eventIdx].deltaT = (float)(idxDiff)/Fs;
-	DV(printf("Ev %d,%f,%d\n",eventArray[eventIdx].diffSum,eventArray[eventIdx].deltaT,eventArray[eventIdx].idxSample);)
+	DV(printf("AP EV %d,%f,%d\n",eventArray[eventIdx].diffSum,eventArray[eventIdx].deltaT,eventArray[eventIdx].idxSample);)
 
 }
 
@@ -95,7 +108,6 @@ QRS ECGProcessor::process(int32_t val) {
 #endif
 	if (cond1 || cond2) {
 		DV(printf("event idx:%d\n",counter);)
-		//crossing points,
 		#ifdef PROFILE_FUNC
 		eventGenCount++;
 		#endif
@@ -117,6 +129,13 @@ QRS ECGProcessor::process(int32_t val) {
 		DV(printf("idx %d Ldiff %d %d , Rdiff %d %d\n",counter,ldiff0,ldiff1,rdiff0,rdiff1);)
 		DV(printf("aDiff %d\n",absDiff);)
 		_processEvent(eventIdx);
+		#ifdef GET_LOCALMAXMIN
+		vLocalMax = INT_MIN;
+		vLocalMin = INT_MAX;
+		vLocalMaxIdx = counter;
+		vLocalMinIdx = counter;
+		#endif
+		
 	}
 #ifdef USETIMING_FILTER
 	return QRSholder[0];
@@ -227,8 +246,24 @@ void ECGProcessor::_processEvent(uint32_t eventIdx) {
 		threshIdx = (threshIdx + 1) % THRESH_ARR_SIZE;
 
 		//add this to qrsholder array
-		QRSholder[1].idx = eventArray[eventIdx].idxSample;
-		QRSholder[1].V = eventV;
+		//check which direction the slope is at
+		#ifdef GET_LOCALMAXMIN
+		if(readSampleArray[lastDataIdx_1]>readSampleArray[lastDataIdx]){
+			//negative slope
+			//get maxidx
+			QRSholder[1].idx = vLocalMaxIdx;//eventArray[eventIdx].idxSample;//changed recently
+			QRSholder[1].V = vLocalMax;
+			//printf("max\n");
+		}else{
+			QRSholder[1].idx = vLocalMinIdx;//eventArray[eventIdx].idxSample;//changed recently
+			QRSholder[1].V = vLocalMin;
+			//printf("min\n");
+		}
+		#else
+			QRSholder[1].V = eventV;
+			QRSholder[1].idx = eventArray[eventIdx].idxSample;
+		#endif
+		
 		QRSholder[1].dV = gradDiff;
 
 #ifdef USETIMING_FILTER

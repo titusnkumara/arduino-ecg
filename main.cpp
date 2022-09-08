@@ -136,7 +136,6 @@ int main(int argc, char** argv) {
 	} else {
 		timestamp_usec2 = -1;
 	}
-	printf("time spent %I64d\n", timestamp_usec2-timestamp_usec1);
 #endif
 
 
@@ -146,8 +145,8 @@ int main(int argc, char** argv) {
 
 
 
-	//format: totaldatasize,hrevents,totalevents,timingfiltercalled
+	//format: totaldatasize,hrevents,totalevents,timingfiltercalled,timeconsumed in microseconds
 #ifdef PROFILE_FUNC
-	DS(printf("%d,%d,%d,%d\n",processor.totalDataCount,successCount,processor.eventGenCount,processor.timingFilter);)
+	DS(printf("%d,%d,%d,%d,%I64d\n",processor.totalDataCount,successCount,processor.eventGenCount,processor.timingFilter,timestamp_usec2-timestamp_usec1);)
 #endif
 }

@@ -7,15 +7,17 @@
 
 #define 	USETIMING_FILTER	1
 
-//#define FILTERING				1
-//#define ECG_NEG_POSSIBLE		1
-//#define 	INVERT_INPUT		1
-#define		PROFILE_FUNC		1
+//#define 	FILTERING				1
+#define 	ECG_NEG_POSSIBLE		1
+//#define 	INVERT_INPUT			1
+#define 	GET_LOCALMAXMIN			1
+
+//#define	PROFILE_FUNC			1
 
 #ifdef FILTERING
 #define 	FCO_MAX				10
-#define		NEW_COEFF			3
-#define		OLD_COEFF			FCO_MAX-NEW_COEFF
+#define		NEW_COEFF			9
+#define		OLD_COEFF			(FCO_MAX-NEW_COEFF)
 #endif
 
 #ifdef ECG_NEG_POSSIBLE
@@ -112,6 +114,13 @@ class ECGProcessor {
 		int32_t leakyMaxV		= 0;
 		int32_t leakyMinV		= 0;
 		int32_t leakyV		= 0;
+		
+		#ifdef GET_LOCALMAXMIN
+		int32_t vLocalMax = 0;
+		uint32_t vLocalMaxIdx = 0;
+		int32_t vLocalMin = 0;
+		uint32_t vLocalMinIdx = 0;
+#endif
 
 		int32_t * readSampleArray = NULL;
 		event_t eventArray[EVENTARR_SIZE];
