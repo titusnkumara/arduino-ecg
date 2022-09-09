@@ -147,6 +147,10 @@ int main(int argc, char** argv) {
 
 	//format: totaldatasize,hrevents,totalevents,timingfiltercalled,timeconsumed in microseconds
 #ifdef PROFILE_FUNC
+#ifdef WINDOWS_CODE
 	DS(printf("%d,%d,%d,%d,%I64d\n",processor.totalDataCount,successCount,processor.eventGenCount,processor.timingFilter,timestamp_usec2-timestamp_usec1);)
+#else
+	DS(printf("%d,%d,%d,%d,%lu\n",processor.totalDataCount,successCount,processor.eventGenCount,processor.timingFilter,timestamp_usec2-timestamp_usec1);)
+#endif
 #endif
 }

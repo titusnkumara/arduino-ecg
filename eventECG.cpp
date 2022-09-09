@@ -47,7 +47,7 @@ void ECGProcessor::_addData(int32_t val) {
 	readSampleArray[curIdx] = ((val * NEW_COEFF) + (prevVal * OLD_COEFF))/FCO_MAX;
 	DV(printf("%d,%d\n",val,readSampleArray[curIdx]);)
 	prevVal = readSampleArray[curIdx];
-	
+
 #else
 	readSampleArray[curIdx] = val;
 #endif
@@ -57,16 +57,16 @@ void ECGProcessor::_addData(int32_t val) {
 	lastDataIdx_1 = (lastDataIdx_1 + 1) % readSampleArraySize;
 	nBehind = (nBehind + 1) % readSampleArraySize;
 	nBehind_1 = (nBehind_1 + 1) % readSampleArraySize;
-	#ifdef GET_LOCALMAXMIN
-	if(val>vLocalMax){
+#ifdef GET_LOCALMAXMIN
+	if(val>vLocalMax) {
 		vLocalMax = val;
 		vLocalMaxIdx = counter;
 	}
-	if(val<vLocalMin){
+	if(val<vLocalMin) {
 		vLocalMin = val;
 		vLocalMinIdx = counter;
 	}
-	#endif
+#endif
 	//printf("%d \n",curIdx);
 }
 
@@ -108,9 +108,9 @@ QRS ECGProcessor::process(int32_t val) {
 #endif
 	if (cond1 || cond2) {
 		DV(printf("event idx:%d\n",counter);)
-		#ifdef PROFILE_FUNC
+#ifdef PROFILE_FUNC
 		eventGenCount++;
-		#endif
+#endif
 		//find out the interested points
 		int32_t midPoint = (lastDataIdx + readSampleArraySize_HN2_1) % readSampleArraySize; //lastDataIdx-ShiftN_2-1;
 		int32_t midPoint_1 = (midPoint + readSampleArraySize_1) % readSampleArraySize; //midPoint-1;
@@ -129,13 +129,13 @@ QRS ECGProcessor::process(int32_t val) {
 		DV(printf("idx %d Ldiff %d %d , Rdiff %d %d\n",counter,ldiff0,ldiff1,rdiff0,rdiff1);)
 		DV(printf("aDiff %d\n",absDiff);)
 		_processEvent(eventIdx);
-		#ifdef GET_LOCALMAXMIN
+#ifdef GET_LOCALMAXMIN
 		vLocalMax = INT_MIN;
 		vLocalMin = INT_MAX;
 		vLocalMaxIdx = counter;
 		vLocalMinIdx = counter;
-		#endif
-		
+#endif
+
 	}
 #ifdef USETIMING_FILTER
 	return QRSholder[0];
@@ -147,7 +147,7 @@ QRS ECGProcessor::process(int32_t val) {
 }
 
 void ECGProcessor::_timingFilter() {
-#ifdef PROFILE_FUNC	
+#ifdef PROFILE_FUNC
 	timingFilter++;
 #endif
 	int32_t tdiffs = (QRSholder[1].idx - QRSholder[0].idx);
@@ -247,23 +247,23 @@ void ECGProcessor::_processEvent(uint32_t eventIdx) {
 
 		//add this to qrsholder array
 		//check which direction the slope is at
-		#ifdef GET_LOCALMAXMIN
-		if(readSampleArray[lastDataIdx_1]>readSampleArray[lastDataIdx]){
+#ifdef GET_LOCALMAXMIN
+		if(readSampleArray[lastDataIdx_1]>readSampleArray[lastDataIdx]) {
 			//negative slope
 			//get maxidx
 			QRSholder[1].idx = vLocalMaxIdx;//eventArray[eventIdx].idxSample;//changed recently
 			QRSholder[1].V = vLocalMax;
 			//printf("max\n");
-		}else{
+		} else {
 			QRSholder[1].idx = vLocalMinIdx;//eventArray[eventIdx].idxSample;//changed recently
 			QRSholder[1].V = vLocalMin;
 			//printf("min\n");
 		}
-		#else
-			QRSholder[1].V = eventV;
-			QRSholder[1].idx = eventArray[eventIdx].idxSample;
-		#endif
-		
+#else
+		QRSholder[1].V = eventV;
+		QRSholder[1].idx = eventArray[eventIdx].idxSample;
+#endif
+
 		QRSholder[1].dV = gradDiff;
 
 #ifdef USETIMING_FILTER

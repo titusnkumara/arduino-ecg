@@ -114,8 +114,8 @@ class ECGProcessor {
 		int32_t leakyMaxV		= 0;
 		int32_t leakyMinV		= 0;
 		int32_t leakyV		= 0;
-		
-		#ifdef GET_LOCALMAXMIN
+
+#ifdef GET_LOCALMAXMIN
 		int32_t vLocalMax = 0;
 		uint32_t vLocalMaxIdx = 0;
 		int32_t vLocalMin = 0;
