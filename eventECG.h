@@ -16,7 +16,7 @@
 
 #ifdef FILTERING
 #define 	FCO_MAX				10
-#define		NEW_COEFF			9
+#define		NEW_COEFF			1
 #define		OLD_COEFF			(FCO_MAX-NEW_COEFF)
 #endif
 
