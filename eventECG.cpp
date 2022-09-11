@@ -37,6 +37,13 @@ ECGProcessor::ECGProcessor(uint32_t _Fs) {
 	QRSholder[0].valid = false;
 	QRSholder[1].valid = false;
 
+#ifdef GET_LOCALMAXMIN
+	vLocalMax = INT_MIN;
+	vLocalMin = INT_MAX;
+	vLocalMaxIdx = counter;
+	vLocalMinIdx = counter;
+#endif
+
 
 }
 
@@ -221,7 +228,7 @@ void ECGProcessor::_processEvent(uint32_t eventIdx) {
 	if (dynamicThresh < endThresh) {
 		dynamicThresh = endThresh;
 	}
-	int32_t vmid = (leakyMaxV - leakyMinV) / 2;
+	int32_t vmid = (leakyMaxV - leakyMinV)/2;
 	if (dynamicThresh > vmid) {
 		dynamicThresh = vmid;
 	}
