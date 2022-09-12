@@ -5,14 +5,36 @@
 #include <stdint.h>
 #include <math.h>
 
+#define 	FILTERING			1
+#define 	ECG_NEG_POSSIBLE	1
+//#define 	INVERT_INPUT		1
 #define 	USETIMING_FILTER	1
+#define 	GET_LOCALMAXMIN		1
+//#define	PROFILE_FUNC		1
 
-//#define 	FILTERING				1
-#define 	ECG_NEG_POSSIBLE		1
-//#define 	INVERT_INPUT			1
-#define 	GET_LOCALMAXMIN			1
 
-//#define	PROFILE_FUNC			1
+//global printf macro for debugging on PC
+//#define PC_VERBOSE			1
+//#define FILE_STAT				1
+#define SHOW_DATA_STAT			1
+
+#define		SHIFT_NDIV			(float)100.0
+#define 	MAX_FS				1000
+#define		DEFAULT_THRESH		1000
+#define		START_THRESH		DEFAULT_THRESH*2
+#define		END_THESH			0
+#define		THRES_DROPRATE		START_THRESH
+#define		T_THRESH			0.33
+
+#define 	EVENTARR_SIZE		3
+#define 	THRESH_ARR_SIZE		3
+#define 	LEAKY_ARR_SIZE		5
+#define 	QRS_HOLDR_SIZE		2 //this is by default 2
+
+//macros for getdifference
+#define getLDiff(left0, left1)  	((left1-left0))
+#define getRDiff(right0, right1) 	((right1 - right0))
+
 
 #ifdef FILTERING
 #define 	FCO_MAX				10
@@ -26,12 +48,6 @@
 #define		NOISE_THRESH		16 //because high event rate, period should be lower
 #endif
 
-
-//global printf macro for debugging on PC
-
-//#define PC_VERBOSE				1
-//#define FILE_STAT				1
-#define SHOW_DATA_STAT			1
 
 #ifdef PC_VERBOSE
 #define DV(x) 					x
@@ -52,31 +68,13 @@
 #endif
 
 
-#define		SHIFT_NDIV			(float)100.0
-#define 	MAX_FS				1000
-#define		DEFAULT_THRESH		1000
-#define		START_THRESH		DEFAULT_THRESH*2
-#define		END_THESH			0
-#define		THRES_DROPRATE		START_THRESH
-#define		T_THRESH			0.33
-
-#define 	EVENTARR_SIZE		3
-#define 	THRESH_ARR_SIZE		3
-#define 	LEAKY_ARR_SIZE		5
-#define 	QRS_HOLDR_SIZE		2 //this is by default 2
-
-
-//macros for getdifference
-
-#define getLDiff(left0, left1)  ((left1-left0))
-#define getRDiff(right0, right1) ((right1 - right0))
-
 typedef struct event_t_ {
 	int32_t diffSum;
 	int32_t eventV;
 	float deltaT;
 	uint32_t idxSample;//global sample position for time calculation
 } event_t;
+
 
 class QRS {
 	public:
@@ -109,11 +107,11 @@ class ECGProcessor {
 		int32_t dynamicThresh 	= DEFAULT_THRESH;
 
 		uint32_t threshIdx = 0;
-		int32_t Tthresh		= 0;
+		int32_t Tthresh = 0;
 
-		int32_t leakyMaxV		= 0;
-		int32_t leakyMinV		= 0;
-		int32_t leakyV		= 0;
+		int32_t leakyMaxV = 0;
+		int32_t leakyMinV = 0;
+		int32_t leakyV = 0;
 
 #ifdef GET_LOCALMAXMIN
 		int32_t vLocalMax = 0;
@@ -142,8 +140,8 @@ class ECGProcessor {
 		uint32_t timingFilter = 0;//thats been within threshold
 #endif
 		uint32_t totalDataCount = 0;
-		int32_t minTthresh  = 0;
-		uint32_t evFreq		= 0;
+		int32_t minTthresh = 0;
+		uint32_t evFreq	= 0;
 		ECGProcessor(uint32_t);//constructor
 		QRS process(int32_t val);
 
