@@ -51,9 +51,13 @@ The output file is a text file with following three columns
 2. Peak location (y)
 3. Calculated, instantanious heart rate (beats per minute)
 
-### Usage
+## Usage
 
-The Windows version of the ArduinoECG program is designed to read from a file while the Arduino version is taking the input from UART input.
+The Windows version of the ArduinoECG program is designed to read from a file while the Arduino version is taking the input from UART input. There is an example ECG data stream provided in data folder.
+The sample data consists of three files,
+- `100.txt` - This is the dataset 100 of MIT-BIH database converted into a txt file
+- `100-ann.txt` - This is the annotated peaks in samples (x-axis)
+- `100-type.txt` - This is the annotation type of each peak. For more information about beat types, please visit [database website](https://archive.physionet.org/physiobank/database/html/mitdbdir/mitdbdir.htm)
 
 ## Arduino Version
 
