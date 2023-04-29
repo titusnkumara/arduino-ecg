@@ -36,3 +36,6 @@
 *.layout
 *.win
 *.bat
+
+# Output.txt
+output.txt

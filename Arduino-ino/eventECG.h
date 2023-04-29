@@ -9,7 +9,7 @@
 #define 	USETIMING_FILTER	1
 
 //#define 	FILTERING				1
-#define 	ECG_NEG_POSSIBLE		1
+//#define 	ECG_NEG_POSSIBLE		1
 //#define 	INVERT_INPUT			1
 #define 	GET_LOCALMAXMIN			1
 
