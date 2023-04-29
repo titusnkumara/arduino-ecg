@@ -19,19 +19,23 @@ To compile and run the Windows version of the project, you will need a C++ compi
 1. Download the project files and extract them to a folder on your computer.
 2. Open a command prompt and navigate to the project directory using the following command:
 
+```
 cd path/to/project/folder
+```
 
 3. Compile the project using the included Makefile:
 
+```
 make ArduinoECG
-
+```
 
 If the makefile doesn't work for your system, you can compile the project manually by running the following commands:
 
+```
 g++ -c eventECG.cpp -o eventECG.o
 g++ -c main.cpp -o main.o
 g++ eventECG.o main.o -o ArduinoECG.exe
-
+```
 
 4. To run the program use .\ArduinoECG.exe \path\to\data\file
 5. The output will be saved into a file called called output.txt
