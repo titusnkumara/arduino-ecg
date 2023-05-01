@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>ECG Data Visualization</title>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+	<canvas id="myChart"></canvas>
+	<canvas id="myChart2"></canvas>
+	<script>
+		fetch('./output.txt').then(r => r.text()).then(d => {
+			const [peak_locations, y_values, heart_rate] = d.split('\n').map(x => x.split(',').map(Number));
+			fetch('./data/100.txt').then(r => r.text()).then(d => {
+				const ecg_data = d.split('\n').map(Number);
+				const ctx = document.getElementById('myChart').getContext('2d');
+				new Chart(ctx, { type: 'line', data: { labels: Array.from(Array(ecg_data.length).keys()), datasets: [{ label: 'ECG Data with Peak Locations', data: ecg_data, borderColor: 'blue', fill: false }, { label: 'Peak Locations', data: peak_locations.map(loc => ({ x: loc, y: ecg_data[loc] })), pointBackgroundColor: 'red', pointRadius: 5, pointHoverRadius: 7, type: 'scatter', }] }, options: { responsive: true, title: { display: true, text: 'ECG Data with Peak Locations' }, legend: { display: true, position: 'bottom' }, scales: { xAxes: [{ scaleLabel: { display: true, labelString: 'Sample Number' } }], yAxes: [{ scaleLabel: { display: true, labelString: 'Voltage (mV)' }, ticks: { beginAtZero: true } }] } } });
+				const ctx2 = document.getElementById('myChart2').getContext('2d');
+				new Chart(ctx2, { type: 'bar', data: { labels: Array.from(Array(heart_rate.length).keys()), datasets: [{ label: 'Heart Rate (beats per minute)', data: heart_rate, backgroundColor: 'blue' }] }, options: { responsive: true, title: { display: true, text: 'Heart Rate (beats per minute)' }, legend: { display: false }, scales: { xAxes: [{ scaleLabel: { display: true, labelString: 'Peak Number' } }], yAxes: [{ scaleLabel: { display: true, labelString: 'Heart Rate (beats per minute)' }, ticks: { beginAtZero: true } }] } } });
+			});
+		});
+	</script>
+</body>
+</html>

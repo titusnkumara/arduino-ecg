@@ -59,6 +59,11 @@ The sample data consists of three files,
 - `100-ann.txt` - This is the annotated peaks in samples (x-axis)
 - `100-type.txt` - This is the annotation type of each peak. For more information about beat types, please visit [database website](https://archive.physionet.org/physiobank/database/html/mitdbdir/mitdbdir.htm)
 
+Once compiled, use the following command to run with the dataset 100.
+```
+.\ArduinoECG.exe .\data\100.txt
+```
+
 ## Arduino Version
 
 To compile and run the Arduino version of the project, you will need an Arduino board and the Arduino IDE installed on your computer. The following instructions assume that you are using a Windows system.

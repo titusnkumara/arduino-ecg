@@ -8,16 +8,30 @@
 #ifndef EventECG_h
 #define EventECG_h
 
-//#include "Arduino.h"
+#define PLATFORM_WINDOWS    1
+//#define PLATFORM_LINUX      1
+//#define PLATFORM_ARDUINO    1
+
+#ifdef PLATFORM_ARDUINO
+#include "Arduino.h"
+#endif
+
 #include <stdint.h>
 #include <math.h>
 
-//macro for user settings
+/***** macro for user settings *****/
 #define     USETIMING_FILTER    1
+
 //#define FILTERING             1
-#define     ECG_NEG_POSSIBLE        1
+
+#define     ECG_NEG_POSSIBLE    1
+
 //#define   INVERT_INPUT        1
-#define       PROFILE_FUNC        1
+
+#ifndef PLATFORM_ARDUINO
+#define     PROFILE_FUNC        1
+#endif
+
 #define     NEED_EXACT_PEAK     1
 
 #define     INPUT_MULTIPLIER    (1000)

@@ -1,6 +1,9 @@
-#include <stdio.h>
+#include <cstdio>
+#include <cstdint>
 #include <stdlib.h>
 #include <sys/time.h>   /* gettimeofday, timeval (for timestamp in microsecond) */
+#include <inttypes.h>
+
 
 #include "eventECG.h"
 //global printf macro for debugging on PC
@@ -166,7 +169,7 @@ int main(int argc, char** argv) {
     } else {
         timestamp_usec2 = -1;
     }
-    printf("%I64d\n", timestamp_usec2-timestamp_usec1);
+    printf("%llu\n", (timestamp_usec2 - timestamp_usec1));
 #endif
 
 #ifdef PROFILE_FUNC
